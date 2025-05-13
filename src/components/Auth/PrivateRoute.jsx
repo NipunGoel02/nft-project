@@ -1,7 +1,19 @@
+// src/components/Auth/PrivateRoute.jsx
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
-import { Navigate } from 'react-router-dom';
 
-export default function PrivateRoute({ children }) {
+const PrivateRoute = () => {
   const { currentUser } = useAuth();
-  return currentUser ? children : <Navigate to="/login" />;
-}
+  const location = useLocation();
+  
+  console.log("Authentication check:", !!currentUser); // Debug log
+  
+  if (!currentUser) {
+    // Save the attempted location for redirect after login
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  return <Outlet />;
+};
+
+export default PrivateRoute;

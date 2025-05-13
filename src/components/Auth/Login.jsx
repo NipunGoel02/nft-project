@@ -7,6 +7,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState('user'); // Default role is 'user'
   const [error, setError] = useState('');
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const { login, signup } = useAuth();
@@ -25,7 +26,7 @@ export default function Login() {
   async function handleSignup(e) {
     e.preventDefault();
     try {
-      await signup(email, password, username);
+      await signup(email, password, username, role);
       navigate('/profile');
     } catch (err) {
       setError(err.message);
@@ -115,6 +116,18 @@ export default function Login() {
                 required 
               />
             </div>
+            <div className={styles['input-field']}>
+              <i className="fas fa-user-shield"></i>
+              <select 
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+                className={styles['role-select']}
+              >
+                <option value="user">Regular User</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </div>
             <button type="submit" className={styles.btn}>Sign up</button>
             <p className={styles['social-text']}>Or Sign up with social platforms</p>
             <div className={styles['social-media']}>
@@ -139,7 +152,7 @@ export default function Login() {
         <div className={`${styles.panel} ${styles['left-panel']}`}>
           <div className={styles.content}>
             <h3>New here?</h3>
-          <p>Sign up now to create, verify, and manage blockchain certificates</p>
+            <p>Sign up now to create, verify, and manage blockchain certificates</p>
             <button className={`${styles.btn} ${styles.transparent}`} onClick={toggleMode}>
               Sign up
             </button>

@@ -80,7 +80,7 @@ const Navbar = () => {
                   <Link to="/login" className="text-gray-600 hover:text-primary-500 font-medium transition-colors duration-300 mr-4">
                     Login
                   </Link>
-                  <Link to="/signup" className="btn-primary">
+                  <Link to="/login" className="btn-primary">
                     Register
                   </Link>
                 </>

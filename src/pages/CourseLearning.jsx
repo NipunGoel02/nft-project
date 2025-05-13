@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getCourseById } from '../services/courseService';
+import ReactPlayer from 'react-player';
+import Quiz from '../pages/Quiz';
 
 const CourseLearning = () => {
   const { courseId } = useParams();
@@ -21,8 +23,7 @@ const CourseLearning = () => {
       try {
         // Simulated API call - replace with actual API
         const data = await getCourseById(courseId);
-        setCourse(data);
-        
+        setCourse(data);         
         // Simulated progress data
         setProgress(30); // 30% complete
         setCompletedLessons(['lesson1', 'lesson2', 'lesson3']);
@@ -250,30 +251,45 @@ const CourseLearning = () => {
             <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
               {currentLesson.type === 'video' ? (
                 <div className="aspect-w-16 aspect-h-9 bg-gray-900">
-                  <div className="flex items-center justify-center h-full">
-                    {/* Replace with actual video player */}
-                    <div className="text-center text-white p-8">
-                      <svg className="w-16 h-16 mx-auto mb-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                      </svg>
-                      <p className="text-lg font-medium">Video Player Placeholder</p>
-                      <p className="text-gray-400 mt-2">This is where the actual video player would be integrated</p>
-                    </div>
-                  </div>
+                  <ReactPlayer
+                    url={currentLesson.content || "https://www.youtube.com/watch?v=ysz5S6PUM-U"}
+                    width="100%"
+                    height="100%"
+                    controls={true}
+                    playing={true}
+                    onEnded={handleLessonComplete}
+                    onProgress={(state) => {
+                      if (state.played > 0.9) { // Mark complete after 90% watched
+                        handleLessonComplete();
+                      }
+                    }}
+                    config={{
+                      youtube: {
+                        playerVars: { showinfo: 1 }
+                      }
+                    }}
+                  />
                 </div>
               ) : currentLesson.type === 'quiz' ? (
                 <div className="p-6">
-                  <div className="text-center p-8">
-                    <svg className="w-16 h-16 mx-auto mb-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <h3 className="text-xl font-semibold mb-2">Quiz: {currentLesson.title}</h3>
-                    <p className="text-gray-600 mb-6">Test your knowledge with this quiz</p>
-                    <button className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors">
-                      Start Quiz
-                    </button>
-                  </div>
+                  <Quiz 
+                    questions={currentLesson.questions || [
+                      {
+                        question: "What is React?",
+                        options: [
+                          "A JavaScript library for building user interfaces",
+                          "A programming language",
+                          "A database system",
+                          "A server-side framework"
+                        ],
+                        correctAnswer: "A JavaScript library for building user interfaces"
+                      }
+                    ]}
+                    onComplete={(score, total) => {
+                      handleLessonComplete();
+                      alert(`You scored ${score} out of ${total}`);
+                    }}
+                  />
                 </div>
               ) : (
                 <div className="p-6">

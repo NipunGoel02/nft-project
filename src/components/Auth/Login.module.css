@@ -1,12 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
 
 .container {
+  margin-left: 0px;
+  padding-left: 0px;
   position: relative;
   width: 100%;
   background: #f8f9fa;
   min-height: 100vh;
   overflow: hidden;
   font-family: "Poppins", sans-serif;
+}
+.role-select {
+  background: none;
+  outline: none;
+  border: none;
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+  width: 100%;
+}
+
+.role-select option {
+  color: #333;
+  background-color: #fff;
 }
 
 .forms-container {
@@ -216,17 +233,42 @@
   font-size: 0.95rem;
   padding: 0.7rem 0;
 }
-
+/* filepath: c:\Users\nipun goel\Downloads\nft certificate project\nft-certificate\src\components\Auth\Login.module.css */
 .transparent {
   margin: 0;
   background: none;
-  border: 2px solid #fff;
+  border: 2px solid white; /* Default white border */
+  color: white; /* Default white text */
   width: 130px;
   height: 41px;
   font-weight: 600;
   font-size: 0.8rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden; /* Ensure the animation stays within bounds */
+  transition: color 0.3s ease; /* Smooth text color transition */
 }
 
+.transparent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  border: 2px solid transparent;
+  background: linear-gradient(90deg, #00BFA6, #00a090); /* Match theme colors */
+  z-index: -1; /* Place behind the button text */
+  transition: width 0.4s ease; /* Smooth animation for the border line */
+}
+
+.transparent:hover::before {
+  width: 100%; /* Expand the border line on hover */
+}
+
+.transparent:hover {
+  color: #00BFA6; /* Match text color to the theme on hover */
+}
 .right-panel .image,
 .right-panel .content {
   transform: translateX(800px);
@@ -404,4 +446,19 @@
   .sign-in-form {
     margin-top: 0px;
   }
+}
+.role-select {
+  background: none;
+  outline: none;
+  border: none;
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+  width: 100%;
+}
+
+.role-select option {
+  color: #333;
+  background-color: #fff;
 }

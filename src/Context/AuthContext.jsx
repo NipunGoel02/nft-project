@@ -13,12 +13,12 @@ export function AuthProvider({ children }) {
   // Helper to get token from localStorage
   const getToken = () => localStorage.getItem('token');
 
-  // Signup function
-  async function signup(name, email, password) {
+  // Signup function with role parameter
+  async function signup(email, password, name, role = 'user') {
     const res = await fetch('http://localhost:5000/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, role }),
     });
     const data = await res.json();
     if (res.ok) {
@@ -75,12 +75,18 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Check if user is admin
+  const isAdmin = () => {
+    return currentUser?.role === 'admin';
+  };
+
   const value = {
     currentUser,
     signup,
     login,
     logout,
     fetchUserProfile,
+    isAdmin, // Add isAdmin helper function
   };
 
   return (

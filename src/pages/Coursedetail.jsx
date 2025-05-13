@@ -86,6 +86,7 @@ const CourseDetail = () => {
       </div>
     );
   }
+  console.log(course);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -167,7 +168,7 @@ const CourseDetail = () => {
                   <div className="absolute -top-4 -left-4 w-24 h-24 bg-amber-400 opacity-20 rounded-full blur-2xl"></div>
                   <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-cyan-400 opacity-20 rounded-full blur-2xl"></div>
                   <img 
-  src={course.thumbnail ? `/${course.thumbnail}` : './th.jpeg'} 
+  src={course.thumbnail} 
   alt={course.title} 
   className="w-full h-auto rounded-2xl shadow-xl z-10 relative"
 />

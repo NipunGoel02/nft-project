@@ -7,8 +7,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       {/* Hero Section */}
-<div className="px-4 py-8 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900">
-  <section className="relative overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
+<div className="px-4 py-8  h w-full bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900">
+  <section className="relative h-90 overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
     {/* Animated background elements */}
     <div className="absolute inset-0 overflow-hidden">
       <motion.div 

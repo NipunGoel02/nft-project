@@ -67,22 +67,11 @@ const Certificate = () => {
   });
 
   useEffect(() => {
-    // Simulated API call to get course data
     const fetchCourse = async () => {
       try {
-        // Replace with actual API call
-        setTimeout(() => {
-          setCourse({
-            id: courseId,
-            title: "Introduction to Blockchain",
-            description: "Comprehensive course covering blockchain fundamentals",
-            instructor: {
-              name: "Dr. Alex Johnson",
-              title: "Blockchain Expert"
-            }
-          });
-          setLoading(false);
-        }, 1000);
+        const response = await axios.get(`http://localhost:5000/api/courses/${courseId}`);
+        setCourse(response.data);
+        setLoading(false);
       } catch (err) {
         setError('Failed to load certificate data');
         setLoading(false);

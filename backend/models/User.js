@@ -24,7 +24,13 @@ const userSchema = new mongoose.Schema({
   },
   enrolledCourses: [{
     type: String
-  }]
+  }],
+  // Add role field for admin functionality
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  }
 });
 
 // Hash password before saving

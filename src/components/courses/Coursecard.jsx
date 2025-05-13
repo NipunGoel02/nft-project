@@ -58,7 +58,7 @@ const CourseCard = ({ course }) => {
         </div>
         
         <Link 
-          to={`/courses/${course.id}`}
+          to={`/courses/${course._id || course.id}`}
           className="mt-6 block w-full"
         >
           <motion.button 

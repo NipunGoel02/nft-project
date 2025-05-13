@@ -3,7 +3,8 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
+
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
@@ -40,19 +41,21 @@ const upload = multer({
 });
 
 // Signup route
+// Signup route
 router.post('/signup', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body; // Extract role from request
   try {
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    user = new User({ name, email, password });
+    user = new User({ name, email, password, role }); // Include role when creating user
     await user.save();
 
     const payload = {
       user: {
-        id: user.id
+        id: user.id,
+        role: user.role // Include role in JWT payload
       }
     };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
@@ -75,11 +78,12 @@ router.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-    const payload = {
-      user: {
-        id: user.id
-      }
-    };
+  const payload = {
+  user: {
+    id: user.id,
+    role: user.role // Include role in JWT payload
+  }
+};
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {

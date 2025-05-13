@@ -1,6 +1,14 @@
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = 'your_secret_key_here'; // Replace with your actual secret key
+const isAdmin = (req, res, next) => {
+  // Check if user is admin (modify according to your auth system)
+  if(req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Admin access required' });
+  }
+};
 
 function auth(req, res, next) {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -16,4 +24,4 @@ function auth(req, res, next) {
   }
 }
 
-module.exports = auth;
+module.exports = { auth, isAdmin };
