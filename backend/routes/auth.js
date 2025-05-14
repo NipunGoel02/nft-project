@@ -10,7 +10,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const JWT_SECRET = 'your_secret_key_here'; // Must match middleware auth.js
+const JWT_SECRET = 'supersecretkey12345'; // Must match middleware auth.js
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -55,6 +55,7 @@ router.post('/signup', async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        email: user.email, // Include email in JWT payload
         role: user.role // Include role in JWT payload
       }
     };

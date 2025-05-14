@@ -25,10 +25,14 @@ const userSchema = new mongoose.Schema({
   enrolledCourses: [{
     type: String
   }],
+  registeredHackathons: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hackathon'
+  }],
   // Add role field for admin functionality
   role: {
     type: String,
-    enum: ['user', 'admin'],
+    enum: ['user', 'admin', 'hackathon organizer'],
     default: 'user'
   }
 });

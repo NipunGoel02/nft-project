@@ -21,8 +21,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Courses', path: '/courses' },
-    { name: 'Certificates', path: '/certificates' },
-    { name: 'Profile', path: '/profile' },
+    { name: 'Hackathons', path: '/hackathons' },
   ];
 
   const handleLogout = async () => {
@@ -69,7 +68,64 @@ const Navbar = () => {
                 </Link>
               </motion.div>
             ))}
-            
+
+            {currentUser && currentUser.role === 'user' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: navLinks.length * 0.1 }}
+              >
+                <Link
+                  to="/profile"
+                  className={`font-medium transition-colors duration-300 ${
+                    location.pathname === '/profile'
+                      ? 'text-primary-600'
+                      : 'text-gray-600 hover:text-primary-500'
+                  }`}
+                >
+                  Profile
+                </Link>
+              </motion.div>
+            )}
+
+            {currentUser && currentUser.role === 'admin' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: navLinks.length * 0.1 }}
+              >
+                <Link
+                  to="/admin"
+                  className={`font-medium transition-colors duration-300 ${
+                    location.pathname === '/admin'
+                      ? 'text-primary-600'
+                      : 'text-gray-600 hover:text-primary-500'
+                  }`}
+                >
+                  Admin
+                </Link>
+              </motion.div>
+            )}
+
+            {currentUser && currentUser.role === 'hackathon organizer' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: navLinks.length * 0.1 }}
+              >
+                <Link
+                  to="/organizer"
+                  className={`font-medium transition-colors duration-300 ${
+                    location.pathname === '/organizer'
+                      ? 'text-primary-600'
+                      : 'text-gray-600 hover:text-primary-500'
+                  }`}
+                >
+                  Organizer
+                </Link>
+              </motion.div>
+            )}
+
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -134,6 +190,35 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+
+              {currentUser && currentUser.role === 'user' && (
+                <Link
+                  to="/profile"
+                  className={`font-medium transition-colors duration-300 ${
+                    location.pathname === '/profile'
+                      ? 'text-primary-600'
+                      : 'text-gray-600 hover:text-primary-500'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+              )}
+
+              {currentUser && currentUser.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className={`font-medium transition-colors duration-300 ${
+                    location.pathname === '/admin'
+                      ? 'text-primary-600'
+                      : 'text-gray-600 hover:text-primary-500'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Admin
+                </Link>
+              )}
+
               <div className="flex flex-col space-y-2 pt-2">
                 {!currentUser ? (
                   <>

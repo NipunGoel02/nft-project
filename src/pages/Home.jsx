@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       {/* Hero Section */}
-<div className="px-4 py-8  h w-full bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900">
+<div className="px-4 py-8  h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900">
   <section className="relative h-90 overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
     {/* Animated background elements */}
     <div className="absolute inset-0 overflow-hidden">
@@ -179,7 +179,7 @@ const Home = () => {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
-                src="./image.png" 
+                src="./images.png" 
                 alt="NFT Certificate Platform" 
                 className="max-w-[90%] h-80 rounded-2xl shadow-2xl z-10 mx-auto"
                 style={{

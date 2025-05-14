@@ -39,7 +39,8 @@ export function AuthProvider({ children }) {
     const data = await res.json();
     if (res.ok) {
       localStorage.setItem('token', data.token);
-      await fetchUserProfile(data.token);
+      const user = await fetchUserProfile(data.token);
+      return user;
     } else {
       throw new Error(data.message || 'Login failed');
     }
@@ -59,10 +60,13 @@ export function AuthProvider({ children }) {
     if (res.ok) {
       const user = await res.json();
       setCurrentUser(user);
+      setLoading(false);
+      return user;
     } else {
       setCurrentUser(null);
+      setLoading(false);
+      return null;
     }
-    setLoading(false);
   }
 
   // On mount, check for token and fetch user

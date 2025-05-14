@@ -10,14 +10,21 @@ export default function Login() {
   const [role, setRole] = useState('user'); // Default role is 'user'
   const [error, setError] = useState('');
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const { login, signup } = useAuth();
+  const { login, signup, currentUser } = useAuth();
   const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate('/profile');
+      const user = await login(email, password);
+      // After login, redirect based on role
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else if (user?.role === 'hackathon organizer') {
+        navigate('/organizer'); // Redirect hackathon organizer to /organizer route
+      } else {
+        navigate('/profile');
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -126,6 +133,7 @@ export default function Login() {
               >
                 <option value="user">Regular User</option>
                 <option value="admin">Administrator</option>
+                <option value="hackathon organizer">Hackathon Organizer</option>
               </select>
             </div>
             <button type="submit" className={styles.btn}>Sign up</button>

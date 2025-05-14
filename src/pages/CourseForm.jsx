@@ -14,7 +14,7 @@ export default function CourseForm() {
     thumbnail: '',
     duration: '',
     level: 'Beginner',
-    price: 0,
+    price: 0, 
     lessonCount: 0,
     instructor: {
       name: '',

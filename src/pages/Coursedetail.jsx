@@ -22,9 +22,10 @@ const CourseDetail = () => {
         // Simulated API call - replace with actual API
         const data = await getCourseById(courseId);
         setCourse(data);
-        
-        // Check if user is enrolled (simulated)
-        setIsEnrolled(data.isEnrolled || false);
+
+        // Check if user is enrolled based on currentUser.enrolledCourses
+        const enrolled = currentUser?.enrolledCourses?.includes(courseId);
+        setIsEnrolled(enrolled || false);
       } catch (err) {
         setError('Failed to load course details');
         console.error(err);
@@ -37,9 +38,14 @@ const CourseDetail = () => {
     
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, [courseId]);
+  }, [courseId, currentUser]);
 
   const handleEnroll = async () => {
+    if (!currentUser) {
+      // Redirect to login if user is not logged in
+      navigate('/login');
+      return;
+    }
     try {
       setEnrolling(true);
       const token = localStorage.getItem('token');
@@ -139,22 +145,28 @@ const CourseDetail = () => {
                     </motion.button>
                   </Link>
                 ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleEnroll}
-                    disabled={enrolling}
-                    className="px-8 py-3 bg-white text-teal-600 font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:bg-gray-300 disabled:text-gray-500"
-                  >
-                    {enrolling ? (
-                      <>
-                        <span className="inline-block w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mr-2"></span>
-                        Enrolling...
-                      </>
+                  <>
+                    {currentUser?.role !== 'admin' ? (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleEnroll}
+                        disabled={enrolling}
+                        className="px-8 py-3 bg-white text-teal-600 font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:bg-gray-300 disabled:text-gray-500"
+                      >
+                        {enrolling ? (
+                          <>
+                            <span className="inline-block w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mr-2"></span>
+                            Enrolling...
+                          </>
+                        ) : (
+                          'Enroll Now'
+                        )}
+                      </motion.button>
                     ) : (
-                      'Enroll Now'
+                      <p className="text-gray-600 font-medium">Admins cannot enroll in courses.</p>
                     )}
-                  </motion.button>
+                  </>
                 )}
               </div>
               
@@ -164,7 +176,7 @@ const CourseDetail = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="relative"
-                >
+                  >
                   <div className="absolute -top-4 -left-4 w-24 h-24 bg-amber-400 opacity-20 rounded-full blur-2xl"></div>
                   <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-cyan-400 opacity-20 rounded-full blur-2xl"></div>
                   <img 
