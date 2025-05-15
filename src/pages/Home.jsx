@@ -512,7 +512,7 @@ const Home = () => {
             <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
               Join our platform today and start earning verifiable blockchain certificates
             </p>
-            <Link to="/signup">
+            <Link to="/login">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

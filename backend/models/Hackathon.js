@@ -28,7 +28,8 @@ const CertificateRequestSchema = new mongoose.Schema({
   participant: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   status: { type: String, enum: ['pending', 'accepted', 'minted', 'rejected'], default: 'pending' },
   requestedAt: { type: Date, default: Date.now },
-  mintedAt: { type: Date }
+  mintedAt: { type: Date },
+  certificateType: { type: String, enum: ['participation', 'winner1', 'winner2', 'winner3'], default: 'participation' }
 });
 
 const HackathonSchema = new mongoose.Schema({

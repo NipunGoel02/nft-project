@@ -1,17 +1,14 @@
 #root {
-    max-width: 1280px;
+    max-width: 1420px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
   }
   body {
     padding-top: 60px; /* Navbar ki height ke hisaab se adjust kar */
+    background-image: url("./image.png");
   }
   
-  /* Ya specific container ko target kar */
-  .container, main, .auth-wrapper {
-    padding-top: 10px; /* Navbar ki height ke hisaab se adjust kar */
-  }
   .logo {
     height: 6em;
     padding: 1.5em;

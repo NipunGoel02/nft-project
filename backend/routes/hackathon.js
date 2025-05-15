@@ -249,9 +249,9 @@ router.get('/organizer/certificates/eligible', authMiddleware, async (req, res) 
 router.post('/organizer/certificates/generate', authMiddleware, async (req, res) => {
   try {
     const organizerId = req.user.id;
-    const { participantId, hackathonId } = req.body;
-    if (!participantId || !hackathonId) {
-      return res.status(400).json({ message: 'participantId and hackathonId are required' });
+    const { participantId, hackathonId, certificateType } = req.body;
+    if (!participantId || !hackathonId || !certificateType) {
+      return res.status(400).json({ message: 'participantId, hackathonId and certificateType are required' });
     }
     // Verify hackathon belongs to organizer
     const hackathon = await Hackathon.findOne({ _id: hackathonId, organizer: organizerId });
@@ -262,18 +262,19 @@ router.post('/organizer/certificates/generate', authMiddleware, async (req, res)
     if (!hackathon.participants.includes(participantId)) {
       return res.status(400).json({ message: 'Participant not registered in this hackathon' });
     }
-    // Check if certificate request already exists
+    // Check if certificate request already exists for this type
     const existingRequest = hackathon.certificateRequests.find(
-      (req) => req.participant.toString() === participantId.toString() && req.status === 'pending'
+      (req) => req.participant.toString() === participantId.toString() && req.status === 'pending' && req.certificateType === certificateType
     );
     if (existingRequest) {
-      return res.status(400).json({ message: 'Certificate request already pending for this participant' });
+      return res.status(400).json({ message: 'Certificate request already pending for this participant and certificate type' });
     }
     // Add new certificate request
     hackathon.certificateRequests.push({
       participant: participantId,
       status: 'pending',
-      requestedAt: new Date()
+      requestedAt: new Date(),
+      certificateType: certificateType
     });
     await hackathon.save();
     res.json({ message: 'Certificate generation request sent successfully' });

@@ -124,18 +124,19 @@ export default function Login() {
               />
             </div>
             <div className={styles['input-field']}>
-              <i className="fas fa-user-shield"></i>
-              <select 
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-                className={styles['role-select']}
-              >
-                <option value="user">Regular User</option>
-                <option value="admin">Administrator</option>
-                <option value="hackathon organizer">Hackathon Organizer</option>
-              </select>
-            </div>
+  <i className="fas fa-user-shield"></i>
+  <select 
+    value={role}
+    onChange={(e) => setRole(e.target.value)}
+    required
+    className={styles['role-select']}
+  >
+    <option value="" disabled>Select your role</option>
+    <option value="user">Regular User</option>
+    <option value="admin">Administrator</option>
+    <option value="hackathon organizer">Hackathon Organizer</option>
+  </select>
+</div>
             <button type="submit" className={styles.btn}>Sign up</button>
             <p className={styles['social-text']}>Or Sign up with social platforms</p>
             <div className={styles['social-media']}>

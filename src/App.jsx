@@ -32,6 +32,11 @@ import OrganizerSubmissions from './pages/hackathon/OrganizerSubmissions.jsx';
 import OrganizerCertificates from './pages/hackathon/OrganizerCertificates.jsx';
 import PendingInvitations from './pages/hackathon/PendingInvitations.jsx';
 import HackathonCertificate from './pages/hackathon/HackathonCertificate.jsx';
+import CreateInternship from './pages/internship/CreateInternship';
+import InternshipOrganizerSubmissions from './pages/internship/OrganizerSubmissions';
+import InternshipOrganizerCertificates from './pages/internship/OrganizerCertificates';
+import InternshipPendingInvitations from './pages/internship/PendingInvitations';
+import InternshipCertificate from './pages/internship/InternshipCertificate';
 import './App.css';
 
 function App() {
@@ -44,7 +49,7 @@ function App() {
 
           <main className="flex-grow">
             <Routes>
-              {/* Public Routes */}
+              {/* Public Routes */} 
                <Route element={<Layout />}></Route>
               <Route path="/" element={<Home />} />
               <Route path="/courses" element={<Courses />} />
@@ -85,6 +90,13 @@ function App() {
               <Route path="/hackathons" element={<HackathonList />} />
               <Route path="/hackathons/:id" element={<HackathonDetail />} />
               <Route path="/hackathons/certificate/:hackathonId" element={<HackathonCertificate />} />
+
+              {/* Internship Routes */}
+              <Route path="/internships/create" element={<CreateInternship />} />
+              <Route path="/internships/organizer/submissions" element={<InternshipOrganizerSubmissions />} />
+              <Route path="/internships/organizer/certificates" element={<InternshipOrganizerCertificates />} />
+              <Route path="/internships/pending-invitations" element={<InternshipPendingInvitations />} />
+              <Route path="/internships/certificate/:internshipId" element={<InternshipCertificate />} />
 
               {/* Admin Routes */}
               <Route element={<AdminRoute />}>

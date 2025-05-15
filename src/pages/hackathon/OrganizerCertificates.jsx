@@ -7,6 +7,7 @@ const OrganizerCertificates = () => {
   const [error, setError] = useState(null);
   const [generating, setGenerating] = useState(null); // userId for which generation is in progress
   const [successMessage, setSuccessMessage] = useState(null);
+  const [selectedCertificateTypes, setSelectedCertificateTypes] = useState({}); // key: userId_hackathonId, value: certificateType
 
   useEffect(() => {
     const fetchEligibleUsers = async () => {
@@ -27,7 +28,14 @@ const OrganizerCertificates = () => {
     fetchEligibleUsers();
   }, []);
 
-  const handleGenerateCertificate = async (userId, hackathonTitle) => {
+  const handleCertificateTypeChange = (userId, hackathonId, certificateType) => {
+    setSelectedCertificateTypes(prev => ({
+      ...prev,
+      [`${userId}_${hackathonId}`]: certificateType
+    }));
+  };
+
+  const handleGenerateCertificate = async (userId, hackathonId) => {
     try {
       setGenerating(userId);
       setSuccessMessage(null);
@@ -35,26 +43,28 @@ const OrganizerCertificates = () => {
       const config = {
         headers: { Authorization: `Bearer ${token}` }
       };
-      // Find hackathonId for this user and hackathonTitle
+      // Find hackathon by id for this user
       const user = eligibleUsers.find(u => u._id === userId);
       if (!user) {
         setError('User not found');
         setGenerating(null);
         return;
       }
-      // For simplicity, pick the hackathon object matching the title
-      const hackathonObj = user.hackathons.find(h => h.title === hackathonTitle);
+      const hackathonObj = user.hackathons.find(h => h.id === hackathonId);
       if (!hackathonObj) {
         setError('Hackathon not found for user');
         setGenerating(null);
         return;
       }
+      const key = `${userId}_${hackathonId}`;
+      const certificateType = selectedCertificateTypes[key] || 'participation'; // default to participation if not selected
       const body = {
         participantId: userId,
-        hackathonId: hackathonObj.id
+        hackathonId: hackathonId,
+        certificateType: certificateType
       };
       await axios.post('/api/hackathons/organizer/certificates/generate', body, config);
-      setSuccessMessage(`Certificate generation request sent to ${user.name} for ${hackathonTitle}`);
+      setSuccessMessage(`Certificate generation request sent to ${user.name} for ${hackathonObj.title} as ${certificateType}`);
       setGenerating(null);
     } catch (err) {
       setError('Failed to generate certificate');
@@ -99,6 +109,7 @@ const OrganizerCertificates = () => {
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Hackathons</th>
+              <th className="px-4 py-2">Certificate Type</th>
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
@@ -111,10 +122,28 @@ const OrganizerCertificates = () => {
                   {user.hackathons.map(h => h.title).join(', ')}
                 </td>
                 <td className="px-4 py-2">
+                  {user.hackathons.map(h => {
+                    const key = `${user._id}_${h.id}`;
+                    return (
+                      <select
+                        key={h.id}
+                        value={selectedCertificateTypes[key] || 'participation'}
+                        onChange={(e) => handleCertificateTypeChange(user._id, h.id, e.target.value)}
+                        className="border border-gray-300 rounded px-2 py-1 mr-2"
+                      >
+                        <option value="participation">Participation</option>
+                        <option value="winner1">Winner 1</option>
+                        <option value="winner2">Winner 2</option>
+                        <option value="winner3">Winner 3</option>
+                      </select>
+                    );
+                  })}
+                </td>
+                <td className="px-4 py-2">
                   {user.hackathons.map(h => (
                     <button
                       key={h.id}
-                      onClick={() => handleGenerateCertificate(user._id, h.title)}
+                      onClick={() => handleGenerateCertificate(user._id, h.id)}
                       disabled={generating === user._id}
                       className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded mr-2"
                     >
