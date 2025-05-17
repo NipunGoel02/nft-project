@@ -10,6 +10,15 @@ const isAdmin = (req, res, next) => {
   }
 };
 
+const isInternshipOrganizer = (req, res, next) => {
+  // Check if user is internship organizer
+  if(req.user && req.user.role === 'internship') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Internship organizer access required' });
+  }
+};
+
 function auth(req, res, next) {
   const authHeader = req.header('Authorization');
   console.log('Authorization header:', authHeader);
@@ -30,4 +39,4 @@ function auth(req, res, next) {
   }
 }
 
-module.exports = { auth, isAdmin };
+module.exports = { auth, isAdmin, isInternshipOrganizer };

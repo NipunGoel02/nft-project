@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { ethers } from 'ethers';
 import axios from 'axios';
 import PendingInvitations from './hackathon/PendingInvitations';
+import TeamInvitations from './hackathon/TeamInvitations';
+import InternshipPendingInvitations from './internship/PendingInvitations';
 export default function Profile() {
   const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export default function Profile() {
       try {
         const token = localStorage.getItem('token');
         console.log('Token sent in request:', token);
-        const response = await axios.get('/api/hackathons/my', {
+        const response = await axios.get('/api/hackathons/registered', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -868,24 +870,42 @@ export default function Profile() {
     </motion.div>
   )}
 </motion.div>
-{/* Team Invitations */}
-<motion.div 
-  className="p-8 border-b border-gray-200"
-  variants={container}
-  initial="hidden"
-  animate="show"
->
-  <motion.div variants={item} className="flex items-center mb-6">
-    <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    </div>
-    <h2 className="text-xl font-bold text-gray-800">Team Invitations</h2>
-  </motion.div>
-  
-  <PendingInvitations />
-</motion.div>
+            {/* Team Invitations */}
+            <motion.div 
+              className="p-8 border-b border-gray-200"
+              variants={container}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.div variants={item} className="flex items-center mb-6">
+                <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Team Invitations</h2>
+              </motion.div>
+              
+              <TeamInvitations />
+            </motion.div>
+
+            {/* Internship Pending Invitations */}
+            <motion.div 
+              className="p-8 border-b border-gray-200"
+              variants={container}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.div variants={item} className="flex items-center mb-6">
+                <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-3-3v6m-6 6h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Pending Internship Invitations</h2>
+              </motion.div>
+              <InternshipPendingInvitations />
+            </motion.div>
 
 
               {/* Certificates */}

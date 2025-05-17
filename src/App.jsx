@@ -1,5 +1,8 @@
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './styles/preloader.css';
+import { useState, useEffect } from 'react';
+
+import Preloader from './components/PreLoaded.jsx';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -12,9 +15,10 @@ import { AuthProvider } from './Context/AuthContext';
 import PrivateRoute from './components/Auth/PrivateRoute';
 import AdminRoute from './components/Auth/AdminRoute'; // New admin route component
 import HackathonOrganizerRoute from './components/Auth/HackathonOrganizerRoute'; // New hackathon organizer route component
+import InternshipOrganizerRoute from './components/Auth/InternshipOrganizerRoute'; // New internship organizer route component
 import Profile from './pages/Profile';
 import Login from './components/Auth/Login.jsx';
-import Signup from './components/auth/Signup';
+import Signup from './components/Auth/Signup';
 import CoursePanel from './pages/CoursePanel';
 import AdminLayout from './components/AdminLayout'; // New admin layout
 import HackathonOrganizerLayout from './components/HackathonOrganizerLayout';
@@ -37,10 +41,27 @@ import InternshipOrganizerSubmissions from './pages/internship/OrganizerSubmissi
 import InternshipOrganizerCertificates from './pages/internship/OrganizerCertificates';
 import InternshipPendingInvitations from './pages/internship/PendingInvitations';
 import InternshipCertificate from './pages/internship/InternshipCertificate';
+import MyInternships from './pages/internship/MyInternships';
+import InternshipDetail from './pages/internship/InternshipDetail';
 import './App.css';
 
 function App() {
+   const [loading, setLoading] = useState(true);
+   
+  useEffect(() => {
+    // Hide preloader after content loads
+    window.addEventListener('load', () => {
+      setTimeout(() => setLoading(false), 3000);
+    });
+
+        setTimeout(() => setLoading(false), 5000);
+  }, []);
   return (
+        <>
+      {loading && <Preloader />}
+
+     <div className={loading ? 'hidden' : ''}>
+
     <BrowserRouter>
       <AuthProvider>
         <div className="flex flex-col min-h-screen bg-background">
@@ -92,11 +113,15 @@ function App() {
               <Route path="/hackathons/certificate/:hackathonId" element={<HackathonCertificate />} />
 
               {/* Internship Routes */}
-              <Route path="/internships/create" element={<CreateInternship />} />
-              <Route path="/internships/organizer/submissions" element={<InternshipOrganizerSubmissions />} />
-              <Route path="/internships/organizer/certificates" element={<InternshipOrganizerCertificates />} />
-              <Route path="/internships/pending-invitations" element={<InternshipPendingInvitations />} />
+              <Route element={<InternshipOrganizerRoute />}>
+                           <Route path="/internships/create" element={<CreateInternship />} />
+                           <Route path="/internships/my" element  = {<MyInternships />} />          
+                           <Route path="/internships/organizer/submissions" element={<InternshipOrganizerSubmissions />} />
+                           <Route path="/internships/organizer/certificates" element={<InternshipOrganizerCertificates />} />
+                           <Route path="/internships/pending-invitations" element={<InternshipPendingInvitations />} />
+              </Route>
               <Route path="/internships/certificate/:internshipId" element={<InternshipCertificate />} />
+              <Route path="/internships/:id" element={<InternshipDetail />} />
 
               {/* Admin Routes */}
               <Route element={<AdminRoute />}>
@@ -114,6 +139,8 @@ function App() {
         </div>
       </AuthProvider>
     </BrowserRouter>
+    </div>
+    </>
   );
 }
 

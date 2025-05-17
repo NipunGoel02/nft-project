@@ -3,10 +3,10 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Internship = require('../models/Internship');
 const User = require('../models/User');
-const { auth: authMiddleware } = require('../middleware/auth');
+const { auth: authMiddleware, isInternshipOrganizer } = require('../middleware/auth');
 
 // POST /api/internships - internship organizer fills internship form including user email
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, isInternshipOrganizer, async (req, res) => {
   try {
     const { title, description, startDate, endDate, participantEmail, certificateType } = req.body;
     if (!title || !description || !startDate || !endDate || !participantEmail || !certificateType) {
@@ -40,7 +40,7 @@ router.post('/', authMiddleware, async (req, res) => {
     // TODO: Send notification to participant email to mint certificate
     // This can be implemented with email service or notification system
 
-    res.status(201).json({ message: 'Internship form submitted and notification sent to participant' });
+    res.status(201).json(internship);
   } catch (error) {
     console.error('Error submitting internship form:', error);
     res.status(500).json({ message: 'Failed to submit internship form' });
@@ -116,6 +116,17 @@ router.post('/certificates/requests/:requestId/accept', authMiddleware, async (r
   } catch (error) {
     console.error('Error accepting certificate request:', error);
     res.status(500).json({ message: 'Failed to accept certificate request' });
+  }
+});
+
+router.get('/organizer', authMiddleware, isInternshipOrganizer, async (req, res) => {
+  try {
+    const organizerId = req.user.id;
+    const internships = await Internship.find({ organizer: organizerId }).sort({ createdAt: -1 });
+    res.json(internships);
+  } catch (error) {
+    console.error('Error fetching organizer internships:', error);
+    res.status(500).json({ message: 'Failed to fetch internships' });
   }
 });
 

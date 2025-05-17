@@ -46,7 +46,21 @@ router.post('/', authMiddleware, async (req, res) => {
     res.status(400).json({ message: 'Failed to create hackathon', error: error.message });
   }
 });
-
+router.get('/registered', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Find hackathons where the user is in the participants array
+    const hackathons = await Hackathon.find({ 
+      participants: userId 
+    }).sort({ startDate: -1 });
+    
+    res.json(hackathons);
+  } catch (err) {
+    console.error('Error fetching registered hackathons:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 // GET /api/hackathons/:id - get hackathon details
 router.get('/:id', async (req, res) => {
   try {

@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
   // Add role field for admin functionality
   role: {
     type: String,
-    enum: ['user', 'admin', 'hackathon organizer'],
+    enum: ['user', 'admin', 'hackathon organizer', 'internship'],
     default: 'user'
   }
 });

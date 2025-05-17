@@ -52,6 +52,13 @@ router.post('/signup', async (req, res) => {
     user = new User({ name, email, password, role }); // Include role when creating user
     await user.save();
 
+    // Link any pending internship certificateRequests with this email to the new user
+    const Internship = require('../models/Internship');
+    await Internship.updateMany(
+      { 'certificateRequests.email': email, 'certificateRequests.participant': null },
+      { $set: { 'certificateRequests.$.participant': user._id } }
+    );
+
     const payload = {
       user: {
         id: user.id,
@@ -82,6 +89,7 @@ router.post('/login', async (req, res) => {
   const payload = {
   user: {
     id: user.id,
+    email: user.email, // Include email in JWT payload
     role: user.role // Include role in JWT payload
   }
 };

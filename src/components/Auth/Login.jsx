@@ -22,6 +22,8 @@ export default function Login() {
         navigate('/admin');
       } else if (user?.role === 'hackathon organizer') {
         navigate('/organizer'); // Redirect hackathon organizer to /organizer route
+      } else if (user?.role === 'internship') {
+        navigate('/internships/create'); // Redirect internship organizer to internship create route
       } else {
         navigate('/profile');
       }
@@ -135,6 +137,7 @@ export default function Login() {
     <option value="user">Regular User</option>
     <option value="admin">Administrator</option>
     <option value="hackathon organizer">Hackathon Organizer</option>
+    <option value="internship">Internship Organizer</option>
   </select>
 </div>
             <button type="submit" className={styles.btn}>Sign up</button>
