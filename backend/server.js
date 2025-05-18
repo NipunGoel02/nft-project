@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/course');
 const hackathonRoutes = require('./routes/hackathon');
 const internshipRoutes = require('./routes/internship');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/hackathons', hackathonRoutes);
 app.use('/api/internships', internshipRoutes);
 app.use('/api', require('./routes/Team'));
+app.use('/api/admin', adminRoutes);
 const MONGO_URI = "mongodb+srv://nipungoel15:qahxnwKHzNPGrUwF@cluster0.p7n6x.mongodb.net/nft-certificate";
 
 

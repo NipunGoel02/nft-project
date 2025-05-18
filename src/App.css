@@ -1,5 +1,5 @@
 #root {
-    max-width: 1420px;
+    max-width: 1520px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
@@ -8,7 +8,19 @@
     padding-top: 60px; /* Navbar ki height ke hisaab se adjust kar */
     background-image: url("./image.png");
   }
-  
+  .animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* For the 3D perspective effect */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
   .logo {
     height: 6em;
     padding: 1.5em;

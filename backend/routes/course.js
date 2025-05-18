@@ -4,10 +4,10 @@ const Course = require('../models/Course');
 const { auth, isAdmin } = require('../middleware/auth');
 
 // Admin routes - protected with auth and isAdmin middleware
-// Get all courses (admin only)
+// Get all courses (admin only) - filtered by createdBy (current admin)
 router.get('/admin/courses', auth, isAdmin, async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.find({ createdBy: req.user.id });
     res.json(courses);
   } catch (error) {
     res.status(500).json({ message: error.message });

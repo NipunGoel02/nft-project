@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/preloader.css';
 import { useState, useEffect } from 'react';
+import AdminUsers from './pages/AdminUsers.jsx';
 
 import Preloader from './components/PreLoaded.jsx';
 import Navbar from './components/Navbar';
@@ -130,6 +131,10 @@ function App() {
                   <Route path="courses" element={<AdminCourses />} />
                   <Route path="courses/new" element={<CourseForm />} />
                   <Route path="courses/edit/:id" element={<CourseForm />} />
+                  <Route path="users" element={<AdminUsers />} />
+
+
+
                 </Route>
               </Route>
             </Routes>
