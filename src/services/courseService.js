@@ -1,7 +1,9 @@
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getCourses = async () => {
-  const res = await fetch('http://localhost:5000/api/courses');
+  const res = await fetch(`${BASE_URL}/api/courses`);
   if (!res.ok) {
     throw new Error('Failed to fetch courses');
   }
@@ -10,7 +12,7 @@ export const getCourses = async () => {
 };
 
 export const getCourseById = async (id) => {
-  const res = await fetch(`http://localhost:5000/api/courses/${id}`);
+  const res = await fetch(`${BASE_URL}/api/courses/${id}`);
   if (!res.ok) {
     throw new Error('Course not found');
   }
@@ -19,7 +21,7 @@ export const getCourseById = async (id) => {
 };
 
 export const enrollInCourse = async (courseId, token) => {
-  const res = await fetch('http://localhost:5000/api/auth/enroll', {
+  const res = await fetch(`${BASE_URL}/api/auth/enroll`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ export const enrollInCourse = async (courseId, token) => {
 };
 
 export const addCourse = async (courseData, token) => {
-  const res = await fetch('http://localhost:5000/api/courses', {
+  const res = await fetch(`${BASE_URL}/api/courses`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -51,4 +53,3 @@ export const addCourse = async (courseData, token) => {
   const data = await res.json();
   return data;
 };
-  

@@ -22,7 +22,14 @@ const TeamInvitations = () => {
           headers: { Authorization: `Bearer ${token}` }
         };
         const response = await axios.get('/api/teams/invites', config);
-        setInvitations(response.data);
+        // Ensure response.data is an array before setting state
+        if (Array.isArray(response.data)) {
+          setInvitations(response.data);
+        } else if (response.data) {
+          setInvitations([response.data]);
+        } else {
+          setInvitations([]);
+        }
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch team invitations');
@@ -110,7 +117,7 @@ const TeamInvitations = () => {
                 Hackathon: {invite.hackathonTitle}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                {new Date(invite.hackathonDates.start).toLocaleDateString()} - {new Date(invite.hackathonDates.end).toLocaleDateString()}
+                {invite.hackathonDates && typeof invite.hackathonDates === 'object' && invite.hackathonDates.start ? new Date(invite.hackathonDates.start).toLocaleDateString() : 'N/A'} - {invite.hackathonDates && typeof invite.hackathonDates === 'object' && invite.hackathonDates.end ? new Date(invite.hackathonDates.end).toLocaleDateString() : 'N/A'}
               </p>
             </div>
             

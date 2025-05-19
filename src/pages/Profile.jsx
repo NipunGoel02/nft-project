@@ -45,7 +45,14 @@ export default function Profile() {
             Authorization: `Bearer ${token}`
           }
         });
-        setRegisteredHackathons(response.data);
+        // Ensure response.data is an array before setting state
+        if (Array.isArray(response.data)) {
+          setRegisteredHackathons(response.data);
+        } else if (response.data) {
+          setRegisteredHackathons([response.data]);
+        } else {
+          setRegisteredHackathons([]);
+        }
       } catch (error) {
         console.error('Error fetching registered hackathons:', error);
       }
@@ -803,7 +810,25 @@ export default function Profile() {
                     </Link>
                   </motion.div>
                 )}
-              </motion.div>{/* Registered Hackathons */}
+              </motion.div>
+              
+              {/* Pending Certificate Requests */}
+<motion.div 
+  className="p-8 border-b border-gray-200"
+  variants={container}
+  initial="hidden"
+  animate="show"
+>
+  <motion.div variants={item} className="flex items-center mb-6">
+    <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+      {/* You can put an icon here */}
+    </div>
+    <h2 className="text-xl font-bold text-gray-800">Pending Certificate Requests</h2>
+  </motion.div>
+  <PendingInvitations />
+</motion.div>
+
+              {/* Registered Hackathons */}
 <motion.div 
   className="p-8 border-b border-gray-200"
   variants={container}
