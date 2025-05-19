@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import CourseCard from '../components/courses/CourseCard';
+import CourseCard from '../components/courses/Coursecard';
 import CourseFilter from '../components/courses/CourseFilter';
 import { getCourses } from '../services/courseService';
 
