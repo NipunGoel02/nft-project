@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-const CourseCard = ({ course }) => {
+const Coursecard = ({ course }) => {
   // Category badge color based on course category
   const getCategoryColor = (category) => {
     const colors = {
@@ -74,4 +74,4 @@ const CourseCard = ({ course }) => {
   );
 };
 
-export default CourseCard;
+export default Coursecard;

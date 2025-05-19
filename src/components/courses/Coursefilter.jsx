@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-const CourseFilter = ({ categories, selectedCategory, onCategoryChange, searchTerm, onSearchChange }) => {
+const Coursefilter = ({ categories, selectedCategory, onCategoryChange, searchTerm, onSearchChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -143,4 +143,4 @@ const CourseFilter = ({ categories, selectedCategory, onCategoryChange, searchTe
   );
 };
 
-export default CourseFilter;
+export default Coursefilter;
