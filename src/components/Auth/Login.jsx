@@ -23,7 +23,7 @@ export default function Login() {
       } else if (user?.role === 'hackathon organizer') {
         navigate('/organizer'); // Redirect hackathon organizer to /organizer route
       } else if (user?.role === 'internship') {
-        navigate('/internships/create'); // Redirect internship organizer to internship create route
+        navigate('/internships'); // Redirect internship organizer to /internships route
       } else {
         navigate('/profile');
       }

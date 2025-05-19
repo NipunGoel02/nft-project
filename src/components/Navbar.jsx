@@ -126,6 +126,25 @@ const Navbar = () => {
               </motion.div>
             )}
 
+            {currentUser && currentUser.role === 'internship' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: (navLinks.length + 1) * 0.1 }}
+              >
+                <Link
+                  to="/internships"
+                  className={`font-medium transition-colors duration-300 ${
+                    location.pathname === '/internships' || location.pathname.startsWith('/internships/')
+                      ? 'text-primary-600'
+                      : 'text-gray-600 hover:text-primary-500'
+                  }`}
+                >
+                  Organizer
+                </Link>
+              </motion.div>
+            )}
+
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -218,6 +237,7 @@ const Navbar = () => {
                   Admin
                 </Link>
               )}
+
 
               <div className="flex flex-col space-y-2 pt-2">
                 {!currentUser ? (

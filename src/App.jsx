@@ -44,6 +44,8 @@ import InternshipPendingInvitations from './pages/internship/PendingInvitations'
 import InternshipCertificate from './pages/internship/InternshipCertificate';
 import MyInternships from './pages/internship/MyInternships';
 import InternshipDetail from './pages/internship/InternshipDetail';
+import InternshipOrganizerLayout from './components/InternshipOrganizerLayout';
+
 import './App.css';
 
 function App() {
@@ -115,8 +117,9 @@ function App() {
 
               {/* Internship Routes */}
               <Route element={<InternshipOrganizerRoute />}>
+                           <Route path='/internships' element = {<InternshipOrganizerLayout />} />
                            <Route path="/internships/create" element={<CreateInternship />} />
-                           <Route path="/internships/my" element  = {<MyInternships />} />          
+                           <Route path="/internships/my-internships" element  = {<MyInternships />} />          
                            <Route path="/internships/organizer/submissions" element={<InternshipOrganizerSubmissions />} />
                            <Route path="/internships/organizer/certificates" element={<InternshipOrganizerCertificates />} />
                            <Route path="/internships/pending-invitations" element={<InternshipPendingInvitations />} />

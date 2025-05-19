@@ -47,24 +47,6 @@ router.post('/', authMiddleware, isInternshipOrganizer, async (req, res) => {
   }
 });
 
-// GET /api/internships/:id - get internship details by id
-router.get('/:id', authMiddleware, async (req, res) => {
-  try {
-    const internshipId = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(internshipId)) {
-      return res.status(400).json({ message: 'Invalid internship ID' });
-    }
-    const internship = await Internship.findById(internshipId).populate('organizer', 'name email');
-    if (!internship) {
-      return res.status(404).json({ message: 'Internship not found' });
-    }
-    res.json(internship);
-  } catch (error) {
-    console.error('Error fetching internship details:', error);
-    res.status(500).json({ message: 'Failed to fetch internship details' });
-  }
-});
-
 // GET /api/internships/certificates/requests - get pending certificate requests for logged-in user
 router.get('/certificates/requests', authMiddleware, async (req, res) => {
   try {
@@ -122,11 +104,34 @@ router.post('/certificates/requests/:requestId/accept', authMiddleware, async (r
 router.get('/organizer', authMiddleware, isInternshipOrganizer, async (req, res) => {
   try {
     const organizerId = req.user.id;
+    console.log('Fetching internships for organizer:', organizerId);
     const internships = await Internship.find({ organizer: organizerId }).sort({ createdAt: -1 });
+    console.log('Internships found:', internships);
     res.json(internships);
   } catch (error) {
     console.error('Error fetching organizer internships:', error);
     res.status(500).json({ message: 'Failed to fetch internships' });
+  }
+});
+
+// GET /api/internships/:id - get internship details by id
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    const internshipId = req.params.id;
+    console.log('Fetching internship with ID:', internshipId);
+    if (!mongoose.Types.ObjectId.isValid(internshipId)) {
+      console.log('Invalid internship ID:', internshipId);
+      return res.status(400).json({ message: 'Invalid internship ID' });
+    }
+    const internship = await Internship.findById(internshipId).populate('organizer', 'name email');
+    if (!internship) {
+      console.log('Internship not found for ID:', internshipId);
+      return res.status(404).json({ message: 'Internship not found' });
+    }
+    res.json(internship);
+  } catch (error) {
+    console.error('Error fetching internship details:', error);
+    res.status(500).json({ message: 'Failed to fetch internship details' });
   }
 });
 
