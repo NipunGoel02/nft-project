@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin', 'hackathon organizer', 'internship'],
     default: 'user'
+  },
+  walletAddress: {
+    type: String,
+    default: ''
   }
 });
 

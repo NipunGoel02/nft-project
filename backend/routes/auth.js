@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const mongoose = require('mongoose');
 
 const JWT_SECRET = 'supersecretkey12345'; // Must match middleware auth.js
 
@@ -101,10 +102,49 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
+
+// Existing routes...
+
 // Get user profile route (protected)
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// New public route to get user profile by id
+router.get('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user id' });
+    }
+    const user = await User.findById(userId)
+      .select('-password')
+      .populate('registeredHackathons')
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Fetch enrolled courses details
+    const Course = require('../models/Course');
+    const enrolledCourses = await Course.find({ _id: { $in: user.enrolledCourses } }).select('title description thumbnail');
+
+    // Fetch internships where user is participant
+    const Internship = require('../models/Internship');
+    const internships = await Internship.find({ participants: user._id }).select('title description startDate endDate');
+
+    // Attach fetched data
+    user.enrolledCoursesDetails = enrolledCourses;
+    user.internships = internships;
+
     res.json(user);
   } catch (err) {
     console.error(err.message);
@@ -147,6 +187,25 @@ router.post('/profile/picture', auth, upload.single('profilePicture'), async (re
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Failed to upload profile picture' });
+  }
+});
+
+router.patch('/wallet', auth, async (req, res) => {
+  try {
+    const { walletAddress } = req.body;
+    if (!walletAddress) {
+      return res.status(400).json({ message: 'walletAddress is required' });
+    }
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.walletAddress = walletAddress;
+    await user.save();
+    res.json({ success: true, walletAddress: user.walletAddress });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 

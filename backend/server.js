@@ -26,6 +26,8 @@ app.use('/api/hackathons', hackathonRoutes);
 app.use('/api/internships', internshipRoutes);
 app.use('/api', require('./routes/Team'));
 app.use('/api/admin', adminRoutes);
+const nftRoutes = require('./routes/nft');
+app.use('/api/nft', nftRoutes);
 const MONGO_URI = "mongodb+srv://nipungoel15:qahxnwKHzNPGrUwF@cluster0.p7n6x.mongodb.net/nft-certificate";
 
 

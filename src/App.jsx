@@ -45,6 +45,7 @@ import InternshipCertificate from './pages/internship/InternshipCertificate';
 import MyInternships from './pages/internship/MyInternships';
 import InternshipDetail from './pages/internship/InternshipDetail';
 import InternshipOrganizerLayout from './components/InternshipOrganizerLayout';
+import PublicProfile from './pages/PublicProfile.jsx';
 
 import './App.css';
 
@@ -83,6 +84,7 @@ function App() {
                    <Route path="/certificates/:courseId" element={<Certificate />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/public-profile/:id" element={<PublicProfile />} />
 
               {/* Authenticated User Routes */}
               <Route element={<PrivateRoute />}>
