@@ -137,12 +137,16 @@ router.get('/users/:id', async (req, res) => {
     const Course = require('../models/Course');
     const enrolledCourses = await Course.find({ _id: { $in: user.enrolledCourses } }).select('title description thumbnail');
 
+    // Fetch completed courses details
+    const completedCourses = await Course.find({ _id: { $in: user.completedCourses || [] } }).select('title description thumbnail');
+
     // Fetch internships where user is participant
     const Internship = require('../models/Internship');
     const internships = await Internship.find({ participants: user._id }).select('title description startDate endDate');
 
     // Attach fetched data
     user.enrolledCoursesDetails = enrolledCourses;
+    user.completedCoursesDetails = completedCourses;
     user.internships = internships;
 
     res.json(user);

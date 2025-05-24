@@ -39,6 +39,15 @@ export default function PublicProfile() {
   if (loading) return <div className="text-center py-12 text-xl">Loading...</div>;
   if (!user) return <div className="text-center py-12 text-red-500">User not found.</div>;
 
+  // Defensive: always check for arrays
+  const completedSet = new Set(user.completedCourses || []);
+  const enrolledCoursesFiltered = (user.enrolledCoursesDetails || []).filter(
+    (course) => !completedSet.has(course._id)
+  );
+  const completedCoursesDetails = (user.enrolledCoursesDetails || []).filter(
+    (course) => completedSet.has(course._id)
+  );
+
   const container = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.2 } }
@@ -57,7 +66,6 @@ export default function PublicProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-100 pb-12">
-      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Animated Header and Share Button */}
         <motion.div
@@ -69,7 +77,18 @@ export default function PublicProfile() {
             <h1 className="text-3xl font-bold">{user.name} Public Profile</h1>
             <p className="mt-2 text-teal-100">View courses, hackathons, internships and certificates</p>
             <div className="absolute top-8 right-8 flex flex-col items-end">
-             
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05, backgroundColor: "#14b8a6" }}
+                className="bg-white text-teal-700 px-4 py-2 rounded-lg font-semibold shadow-lg flex items-center gap-2 transition-all duration-300"
+                onClick={handleShare}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2"
+                  viewBox="0 0 24 24">
+                  <path d="M15 12h.01M12 12h.01M9 12h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z" />
+                </svg>
+                Share Profile
+              </motion.button>
               <AnimatePresence>
                 {showTooltip && (
                   <motion.div
@@ -117,7 +136,7 @@ export default function PublicProfile() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              {/* Enrolled Courses */}
+              {/* Enrolled Courses (filtered) */}
               <motion.div
                 className="p-8 border-b border-gray-200"
                 variants={container}
@@ -130,9 +149,9 @@ export default function PublicProfile() {
                   </div>
                   <h2 className="text-xl font-bold text-gray-800">Enrolled Courses</h2>
                 </motion.div>
-                {user.enrolledCoursesDetails && user.enrolledCoursesDetails.length > 0 ? (
+                {enrolledCoursesFiltered.length > 0 ? (
                   <div className="space-y-4">
-                    {user.enrolledCoursesDetails.map((course) => (
+                    {enrolledCoursesFiltered.map((course) => (
                       <motion.div
                         key={course._id}
                         variants={item}
@@ -155,6 +174,56 @@ export default function PublicProfile() {
                   <motion.div variants={item} className="bg-gray-50 rounded-lg p-6 text-center">
                     <svg className="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     <p className="text-gray-600 mb-4">This user has not enrolled in any courses yet.</p>
+                  </motion.div>
+                )}
+              </motion.div>
+
+              {/* Completed Courses */}
+              <motion.div
+                className="p-8 border-b border-gray-200"
+                variants={container}
+                initial="hidden"
+                animate="show"
+              >
+                <motion.div variants={item} className="flex items-center mb-6">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-800">Completed Courses</h2>
+                </motion.div>
+                {completedCoursesDetails.length > 0 ? (
+                  <div className="space-y-4">
+                    {completedCoursesDetails.map((course) => (
+                      <motion.div
+                        key={course._id}
+                        variants={item}
+                        className="bg-green-50 border border-green-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+                      >
+                        <Link to={`/courses/${course._id}`} className="block p-4 flex items-center">
+                          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-800">{course.title}</span>
+                            <div className="text-sm text-green-700 mt-1">Completed</div>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <motion.div variants={item} className="bg-gray-50 rounded-lg p-6 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <p className="text-gray-600 mb-4">This user has not completed any courses yet.</p>
                   </motion.div>
                 )}
               </motion.div>

@@ -16,8 +16,8 @@ const GlowingCubeCluster = () => {
 
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.x += 0.005;
-      groupRef.current.rotation.y += 0.007;
+      groupRef.current.rotation.x -= 0.005;
+      groupRef.current.rotation.y -= 0.007;
 
       groupRef.current.children.forEach((cube, index) => {
         const scale = 1 + 0.3 * Math.sin(state.clock.elapsedTime * 2 + index);
@@ -30,7 +30,7 @@ const GlowingCubeCluster = () => {
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef}  position={[3, 0, 0]}>
       {positions.map((pos, i) => (
         <mesh key={i} position={pos} castShadow receiveShadow>
           <boxGeometry args={[0.8, 0.8, 0.8]} />
@@ -326,7 +326,7 @@ const Scene = () => {
       <directionalLight position={[5, 5, 5]} intensity={0.8} castShadow />
       <pointLight position={[-5, -5, -5]} intensity={0.5} />
       
-      <GlowingCubeCluster />
+      <GlowingCubeCluster  position={[5, 0, 0]} />
       
       {showCertificate && <HolographicCertificate />}
       {showNetwork && <FuturisticDataField/>}

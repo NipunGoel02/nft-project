@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
   enrolledCourses: [{
     type: String
   }],
+  completedCourses: [{
+    type: String
+  }],
   registeredHackathons: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hackathon'

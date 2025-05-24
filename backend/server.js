@@ -8,10 +8,10 @@ const courseRoutes = require('./routes/course');
 const hackathonRoutes = require('./routes/hackathon');
 const internshipRoutes = require('./routes/internship');
 const adminRoutes = require('./routes/admin');
+const userCompletionRoutes = require('./routes/userCompletion');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 
 
 
@@ -28,7 +28,11 @@ app.use('/api', require('./routes/Team'));
 app.use('/api/admin', adminRoutes);
 const nftRoutes = require('./routes/nft');
 app.use('/api/nft', nftRoutes);
+
+app.use('/api/userCompletion', userCompletionRoutes);
+
 const MONGO_URI = "mongodb+srv://nipungoel15:qahxnwKHzNPGrUwF@cluster0.p7n6x.mongodb.net/nft-certificate";
+
 
 
 
