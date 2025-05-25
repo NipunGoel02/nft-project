@@ -7,45 +7,46 @@ export default function CourseForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [course, setCourse] = useState({
-    title: '',
-    description: '',
-    longDescription: '',
-    thumbnail: '',
-    duration: '',
-    level: 'Beginner',
-    price: 0, 
-    lessonCount: 0,
-    instructor: {
-      name: '',
+    const [course, setCourse] = useState({
       title: '',
-      bio: '',
-      avatar: ''
-    },
-    sections: [
-      {
+      description: '',
+      longDescription: '',
+      thumbnail: '',
+      duration: '',
+      level: 'Beginner',
+      price: 0, 
+      lessonCount: 0,
+      category: '', // Added category field
+      instructor: {
+        name: '',
         title: '',
-        duration: '',
-        lessons: [
-          {
-            title: '',
-            type: 'video',
-            content: '',
-            duration: ''
-          }
-        ]
-      }
-    ],
-    outcomes: [''],
-    requirements: [''],
-    quizQuestions: [
-      {
-        question: '',
-        options: ['', '', '', ''],
-        correctAnswer: 0
-      }
-    ]
-  });
+        bio: '',
+        avatar: ''
+      },
+      sections: [
+        {
+          title: '',
+          duration: '',
+          lessons: [
+            {
+              title: '',
+              type: 'video',
+              content: '',
+              duration: ''
+            }
+          ]
+        }
+      ],
+      outcomes: [''],
+      requirements: [''],
+      quizQuestions: [
+        {
+          question: '',
+          options: ['', '', '', ''],
+          correctAnswer: 0
+        }
+      ]
+    });
 
   // Load existing course data if editing
   React.useEffect(() => {
@@ -345,11 +346,34 @@ export default function CourseForm() {
                       <option value="Advanced">Advanced</option>
                     </select>
                   </motion.div>
+
+                  <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.65 }}
+>
+  <label className="block text-sm font-medium mb-1">Category</label>
+  <select
+    value={course.category}
+    onChange={(e) => setCourse({ ...course, category: e.target.value })}
+    className="w-full p-2 border rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+    required
+  >
+    <option value="">Select Category</option>
+    <option value="Blockchain">Blockchain</option>
+    <option value="Web Development">Web Development</option>
+    <option value="Design">Design</option>
+    <option value="AI">AI</option>
+    {/* Add more as needed */}
+  </select>
+</motion.div>
+
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
                   >
+
                     <label className="block text-sm font-medium mb-1">Price (USD)</label>
                     <input
                       type="number"

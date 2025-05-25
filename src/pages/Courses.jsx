@@ -47,7 +47,7 @@ const Courses = () => {
 
   useEffect(() => {
     const filtered = courses.filter(course => {
-      const matchesCategory = category === 'all' || course.category === category;
+      const matchesCategory = category === 'all' || (course.category && course.category.toLowerCase() === category.toLowerCase());
       const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            course.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesCategory && matchesSearch;

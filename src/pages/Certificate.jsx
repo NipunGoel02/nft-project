@@ -128,6 +128,20 @@ const Certificate = () => {
       }
       
       setWalletAddress(address);
+      try {
+        // Save wallet address to backend
+        const token = localStorage.getItem('token');
+        console.log('Saving wallet address with token:', token);
+        await axios.patch('http://localhost:5000/api/auth/wallet', { walletAddress: address }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log('Wallet address saved successfully');
+      } catch (err) {
+        console.error('Failed to save wallet address:', err);
+        alert('Failed to save wallet address. Please try again.');
+      }
       setWalletConnected(true);
     } catch (error) {
       console.error('Error connecting wallet:', error);

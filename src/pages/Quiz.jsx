@@ -295,24 +295,7 @@ const Quiz = () => {
             </div>
           </div>
           <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-4 text-center">Question Summary</h3>
-            <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 mb-6">
-              {questions.map((question, index) => {
-                const isCorrect = answers[index] === question.options[question.correctAnswer];
-                return (
-                  <div 
-                    key={index}
-                    className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                      isCorrect 
-                        ? 'bg-green-100 text-green-700 border border-green-300' 
-                        : 'bg-red-100 text-red-700 border border-red-300'
-                    }`}
-                  >
-                    {index + 1}
-                  </div>
-                );
-              })}
-            </div>
+           
           </div>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             {!isCompleted && (

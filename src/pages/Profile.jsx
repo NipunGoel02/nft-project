@@ -29,14 +29,34 @@ export default function Profile() {
     fileInputRef.current.click();
   };
 
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-      // Optionally, upload to server here
+const handleProfileImageChange = async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    // 1. Show preview instantly
+    const previewUrl = URL.createObjectURL(file);
+    setProfileImage(previewUrl);
+
+    // 2. Upload image to backend
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('/api/auth/profile/picture', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (response.data && response.data.profilePicture) {
+        setProfileImage(response.data.profilePicture); // Use backend URL after upload
+      }
+    } catch (error) {
+      console.error('Failed to upload profile picture:', error);
+      // Optionally revert preview on error
     }
-  };
+  }
+};
+
   // --- End Profile Image Upload State ---
 
   useEffect(() => {
@@ -73,10 +93,46 @@ export default function Profile() {
       }
     };
 
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await axios.get('/api/auth/profile', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (response.data && response.data.profilePicture) {
+            setProfileImage(response.data.profilePicture);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+
     fetchRegisteredHackathons();
     checkWalletConnection();
+    fetchUserProfile();
+
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+  const fetchProfileImage = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // Adjust the endpoint as per your backend (e.g. /api/profile/picture or /api/auth/profile)
+      const res = await axios.get('/api/auth/profile/picture', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data && res.data.profilePicture) {
+        setProfileImage(res.data.profilePicture); // URL from backend
+      }
+    } catch (err) {
+      setProfileImage(null);
+    }
+  };
+  fetchProfileImage();
+}, []);
+
  useEffect(() => {
   const fetchAndMapCourses = async () => {
     try {
@@ -752,33 +808,35 @@ export default function Profile() {
               <div className="text-center">
                 {/* --- Profile Image Upload Area --- */}
                 <div className="relative mx-auto w-32 h-32 mb-4">
-                  <div
-                    className="w-32 h-32 rounded-full bg-teal-100 flex items-center justify-center text-teal-500 text-4xl font-bold overflow-hidden border-4 border-white shadow-xl cursor-pointer group"
-                    onClick={handleProfileImageClick}
-                    title="Click to change profile picture"
-                  >
-                    {profileImage ? (
-                      <img
-                        src={profileImage}
-                        alt="Profile"
-                        className="w-full h-full object-cover rounded-full border-4 border-white shadow-xl"
-                      />
-                    ) : (
-                      currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      style={{ display: "none" }}
-                      onChange={handleProfileImageChange}
-                    />
-                    <span className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow opacity-80 group-hover:opacity-100 transition-opacity">
-                      <svg className="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2a2.828 2.828 0 11-4-4l6 6a2.828 2.828 0 01-4-4z" />
-                      </svg>
-                    </span>
-                  </div>
+<div
+  className="w-32 h-32 rounded-full bg-teal-100 flex items-center justify-center text-teal-500 text-4xl font-bold overflow-hidden border-4 border-white shadow-xl cursor-pointer group"
+  onClick={handleProfileImageClick}
+  title="Click to change profile picture"
+>
+  {profileImage ? (
+    <img
+      src={profileImage}
+      alt="Profile"
+      className="w-full h-full object-cover rounded-full border-4 border-white shadow-xl"
+    />
+  ) : (
+    currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'
+  )}
+  <input
+  type="file"
+  accept="image/*"
+  ref={fileInputRef}
+  style={{ display: "none" }}
+  onChange={handleProfileImageChange}
+/>
+
+  <span className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow opacity-80 group-hover:opacity-100 transition-opacity">
+    <svg className="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2a2.828 2.828 0 11-4-4l6 6a2.828 2.828 0 01-4-4z" />
+    </svg>
+  </span>
+</div>
+
                 </div>
                 {/* --- End Profile Image Upload Area --- */}
                 <h2 className="text-xl font-bold text-gray-800">{currentUser.name || 'User'}</h2>

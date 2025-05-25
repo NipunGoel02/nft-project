@@ -35,8 +35,17 @@ export default function Login() {
   async function handleSignup(e) {
     e.preventDefault();
     try {
-      await signup(email, password, username, role);
-      navigate('/profile');
+      const user = await signup(email, password, username, role);
+      // Redirect based on role after signup
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else if (user?.role === 'hackathon organizer') {
+        navigate('/organizer');
+      } else if (user?.role === 'internship') {
+        navigate('/internships');
+      } else {
+        navigate('/profile');
+      }
     } catch (err) {
       setError(err.message);
     }

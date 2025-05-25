@@ -193,6 +193,19 @@ router.post('/profile/picture', auth, upload.single('profilePicture'), async (re
     res.status(500).json({ message: 'Failed to upload profile picture' });
   }
 });
+// Get current user's profile picture
+router.get('/profile/picture', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('profilePicture');
+    if (!user || !user.profilePicture) {
+      return res.status(404).json({ message: 'Profile picture not found' });
+    }
+    res.json({ profilePicture: user.profilePicture });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch profile picture' });
+  }
+});
 
 router.patch('/wallet', auth, async (req, res) => {
   try {

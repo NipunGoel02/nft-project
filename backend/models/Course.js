@@ -44,6 +44,7 @@ const courseSchema = new mongoose.Schema({
   level: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], default: 'Beginner' },
   price: { type: Number, default: 0 },
   lessonCount: { type: Number, default: 0 },
+  category: { type: String, required: true }, // Added category field
   outcomes: [String],
   requirements: [String],
   sections: [sectionSchema],

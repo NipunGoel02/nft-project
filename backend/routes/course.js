@@ -44,6 +44,7 @@ router.post('/admin/courses', auth, isAdmin, async (req, res) => {
       level: req.body.level,
       price: req.body.price,
       lessonCount: req.body.lessonCount || 0,
+      category: req.body.category, // Added category
       outcomes: req.body.outcomes || [],
       requirements: req.body.requirements || [],
       sections: req.body.sections || [],
@@ -78,6 +79,7 @@ router.put('/admin/courses/:id', auth, isAdmin, async (req, res) => {
         level: req.body.level,
         price: req.body.price,
         lessonCount: req.body.lessonCount,
+        category: req.body.category, // Added category
         outcomes: req.body.outcomes,
         requirements: req.body.requirements,
         sections: req.body.sections,
@@ -113,7 +115,7 @@ router.delete('/admin/courses/:id', auth, isAdmin, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const courses = await Course.find().select(
-      'title description thumbnail instructor.name level duration price'
+      'title description thumbnail instructor.name level duration price category'
     );
     res.json(courses);
   } catch (error) {
