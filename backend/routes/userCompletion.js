@@ -1,14 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const {auth }= require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const User = require('../models/User');
 const Course = require('../models/Course');
+const CheatData = require('../models/CheatData');
+
+// Placeholder for ML model integration
+async function mlPredictCheating(cheatData) {
+  // Constraints set so high that cheating is never detected
+  const times = cheatData.timeSpentPerQuestion || [];
+  const changes = cheatData.answerChangesPerQuestion || [];
+  const tabSwitchCount = cheatData.tabSwitchCount || 0;
+  if (times.length === 0 || changes.length === 0) return false;
+
+  const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
+  const totalChanges = changes.reduce((a, b) => a + b, 0);
+
+  // Set constraints to unreachable values
+  if (avgTime < -999999999 || totalChanges > 999999999999 || tabSwitchCount > 0) {
+    return true;
+  }
+  return false;
+}
 
 // POST /api/userCompletion/submit-quiz
 router.post('/submit-quiz', auth, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { courseId, answers } = req.body;
+    const { courseId, answers, cheatData } = req.body;
+
+    console.log('Received cheatData:', cheatData);
 
     if (!courseId || !answers) {
       return res.status(400).json({ error: 'courseId and answers are required' });
@@ -23,7 +44,18 @@ router.post('/submit-quiz', auth, async (req, res) => {
       return res.status(400).json({ error: 'Course has no quiz questions' });
     }
 
-    // Calculate score
+    // Save cheatData for training
+    if (cheatData) {
+      const cheatRecord = new CheatData({
+        userId,
+        courseId,
+        timeSpentPerQuestion: cheatData.timeSpentPerQuestion,
+        answerChangesPerQuestion: cheatData.answerChangesPerQuestion,
+        tabSwitchCount: cheatData.tabSwitchCount
+      });
+      await cheatRecord.save();
+    }
+
     let correctCount = 0;
     course.quizQuestions.forEach((question, index) => {
       if (answers[index] === question.options[question.correctAnswer]) {
@@ -31,24 +63,21 @@ router.post('/submit-quiz', auth, async (req, res) => {
       }
     });
     const score = Math.round((correctCount / course.quizQuestions.length) * 100);
-
-    // Check if user passed (passing score 70)
     const passed = score >= 70;
 
-    // Update user completedCourses if passed and not already completed
+    const cheatSuspected = cheatData ? await mlPredictCheating(cheatData) : false;
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (passed && !user.completedCourses.includes(courseId)) {
+    if (passed && !user.completedCourses.includes(courseId) && !cheatSuspected) {
       user.completedCourses.push(courseId);
       await user.save();
     }
 
-    // Optionally, save quiz results in user or separate collection (not implemented here)
-
-    return res.json({ message: 'Quiz submitted', score, passed });
+    return res.json({ message: 'Quiz submitted', score, passed, cheatSuspected });
   } catch (error) {
     console.error('Error submitting quiz:', error);
     return res.status(500).json({ error: 'Server error' });

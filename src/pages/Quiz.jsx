@@ -17,7 +17,16 @@ const Quiz = () => {
   const [courseName, setCourseName] = useState('');
   const [user, setUser] = useState(null);
   const [markingCompleted, setMarkingCompleted] = useState(false);
+  const [cheatWarning, setCheatWarning] = useState(false);
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
   const timerRef = useRef(null);
+
+  // Track time spent per question
+  const timeSpentPerQuestion = useRef(new Array(questions.length).fill(0));
+  // Track answer changes per question
+  const answerChangesPerQuestion = useRef(new Array(questions.length).fill(0));
+  // Track last time question was viewed
+  const lastQuestionViewTime = useRef(Date.now());
 
   // Fetch user profile (to get completedCourses)
   useEffect(() => {
@@ -47,6 +56,10 @@ const Quiz = () => {
           setQuestions(response.data.quizQuestions);
           setAnswers(new Array(response.data.quizQuestions.length).fill(null));
           setCourseName(response.data.title);
+          // Initialize tracking arrays
+          timeSpentPerQuestion.current = new Array(response.data.quizQuestions.length).fill(0);
+          answerChangesPerQuestion.current = new Array(response.data.quizQuestions.length).fill(0);
+          lastQuestionViewTime.current = Date.now();
         } else {
           setError('This course does not have any quiz questions yet.');
         }
@@ -69,6 +82,11 @@ const Quiz = () => {
             handleQuizComplete();
             return 0;
           }
+          // Update time spent on current question
+          const now = Date.now();
+          const elapsed = (now - lastQuestionViewTime.current) / 1000;
+          timeSpentPerQuestion.current[currentQuestion] += elapsed;
+          lastQuestionViewTime.current = now;
           return prevTime - 1;
         });
       }, 1000);
@@ -76,13 +94,35 @@ const Quiz = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [loading, error, questions, quizComplete]);
+  }, [loading, error, questions, quizComplete, currentQuestion]);
+
+  // Detect tab switch or visibility change
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setTabSwitchCount(count => count + 1);
+      }
+    };
+    const handleWindowBlur = () => {
+      setTabSwitchCount(count => count + 1);
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, []);
 
   // Check if course is completed by user
   const isCompleted = user?.completedCourses?.map(id => id.toString()).includes(courseId);
 
   const handleAnswer = (option) => {
     const newAnswers = [...answers];
+    if (newAnswers[currentQuestion] !== option) {
+      // Increment answer change count if answer changed
+      answerChangesPerQuestion.current[currentQuestion]++;
+    }
     newAnswers[currentQuestion] = option;
     setAnswers(newAnswers);
   };
@@ -113,17 +153,27 @@ const Quiz = () => {
     const finalScore = Math.round((correctAnswers / questions.length) * 100);
     setScore(finalScore);
 
+    // Prepare cheatData
+    const cheatData = {
+      timeSpentPerQuestion: timeSpentPerQuestion.current,
+      answerChangesPerQuestion: answerChangesPerQuestion.current,
+      totalTime: 600 - timeLeft,
+      tabSwitchCount: tabSwitchCount
+    };
+
     // Call backend to submit quiz and mark course as completed
     try {
       const token = localStorage.getItem('token');
-      console.log('Submitting quiz to URL:', '/api/userCompletion/submit-quiz');
-      await axios.post('/api/userCompletion/submit-quiz', { courseId, answers }, {
+      const response = await axios.post('/api/userCompletion/submit-quiz', { courseId, answers, cheatData }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setQuizComplete(true);
+      if (response.data.cheatSuspected) {
+        setCheatWarning(true);
+      } else {
+        setCheatWarning(false);
+      }
       // Do NOT mark course as completed here; wait for certificate claim
-      // Remove adding courseId to completedCourses here to avoid premature completion
-      // The course completion will be marked on certificate claim via /complete-course route
     } catch (error) {
       console.error('Quiz submission error:', error);
       if (error.response && error.response.data && error.response.data.error) {
@@ -159,6 +209,10 @@ const Quiz = () => {
   };
 
   const handleClaimCertificate = async () => {
+    if (cheatWarning) {
+      alert('Cheating suspected. You cannot claim the certificate.');
+      return;
+    }
     await markCourseCompleted();
     navigate(`/certificates/${courseId}`);
   };
@@ -172,6 +226,8 @@ const Quiz = () => {
     setCurrentQuestion(0);
     setAnswers(new Array(questions.length).fill(null));
     setTimeLeft(600);
+    setCheatWarning(false);
+    setTabSwitchCount(0);
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
@@ -286,9 +342,16 @@ const Quiz = () => {
                 ? `You've successfully completed the ${courseName} assessment.` 
                 : `You didn't meet the passing criteria for the ${courseName} assessment.`}
             </p>
+            {cheatWarning && (
+              <p className="text-red-600 font-semibold mb-4">
+                Cheating suspected. You cannot claim the certificate.
+              </p>
+            )}
             <div className="inline-block bg-gray-100 rounded-full px-6 py-3 mb-6">
               <span className="text-gray-700 font-medium">Your Score: </span>
-              <span className={`text-xl font-bold ${passed ? 'text-green-600' : 'text-red-600'}`}>
+              <span className={`text-xl font-bold ${
+                passed ? 'text-green-600' : 'text-red-600'
+              }`}>
                 {score}%
               </span>
               <span className="text-gray-500"> (Passing: 70%)</span>
@@ -311,7 +374,7 @@ const Quiz = () => {
               <button
                 onClick={handleClaimCertificate}
                 className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-                disabled={markingCompleted}
+                disabled={markingCompleted || cheatWarning}
               >
                 {markingCompleted ? "Marking Completed..." : "Claim Your Certificate"}
               </button>

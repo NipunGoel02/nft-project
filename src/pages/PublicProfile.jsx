@@ -116,9 +116,17 @@ export default function PublicProfile() {
             >
               <div className="text-center">
                 <div className="relative mx-auto w-32 h-32 mb-4">
-                  <div className="w-32 h-32 rounded-full bg-teal-100 flex items-center justify-center text-teal-500 text-4xl font-bold overflow-hidden border-4 border-white shadow-xl">
-                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                  </div>
+                <div className="w-32 h-32 rounded-full bg-teal-100 flex items-center justify-center text-teal-500 text-4xl font-bold overflow-hidden border-4 border-white shadow-xl">
+                  {user.profilePicture ? (
+                    <img
+                      src={user.profilePicture.startsWith('http') ? user.profilePicture : 'http://localhost:5000' + user.profilePicture}
+                      alt="Profile"
+                      className="w-full h-full object-cover rounded-full border-4 border-white shadow-xl"
+                    />
+                  ) : (
+                    user.name ? user.name.charAt(0).toUpperCase() : 'U'
+                  )}
+                </div>
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">{user.name || 'User'}</h2>
                 {user.walletAddress && (

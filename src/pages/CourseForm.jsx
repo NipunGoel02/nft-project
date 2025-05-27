@@ -309,13 +309,51 @@ export default function CourseForm() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    <label className="block text-sm font-medium mb-1">Thumbnail URL</label>
+                    <label className="block text-sm font-medium mb-1">Thumbnail Image</label>
                     <input
-                      type="text"
-                      value={course.thumbnail}
-                      onChange={(e) => setCourse({ ...course, thumbnail: e.target.value })}
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          // Show preview locally
+                          const previewUrl = URL.createObjectURL(file);
+                          setCourse({ ...course, thumbnail: previewUrl });
+
+                          // Upload to server
+                          const formData = new FormData();
+                          formData.append('image', file);
+                          try {
+                            const token = localStorage.getItem('token');
+                            const response = await fetch('/api/upload/image', {
+                              method: 'POST',
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                              body: formData,
+                            });
+                            if (!response.ok) {
+                              throw new Error('Image upload failed');
+                            }
+                            const data = await response.json();
+                            // Prepend backend base URL to image URL
+                            const backendBaseUrl = 'http://localhost:5000';
+                            const fullUrl = data.url.startsWith('http') ? data.url : backendBaseUrl + data.url;
+                            setCourse((prev) => ({ ...prev, thumbnail: fullUrl }));
+                          } catch (error) {
+                            alert('Failed to upload image');
+                          }
+                        }
+                      }}
                       className="w-full p-2 border rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     />
+                    {course.thumbnail && (
+                      <img
+                        src={course.thumbnail}
+                        alt="Thumbnail Preview"
+                        className="mt-2 max-h-40 object-contain rounded"
+                      />
+                    )}
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -464,18 +502,57 @@ export default function CourseForm() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    <label className="block text-sm font-medium mb-1">Avatar URL</label>
+                    <label className="block text-sm font-medium mb-1">Instructor Avatar</label>
                     <input
-                      type="text"
-                      value={course.instructor.avatar}
-                      onChange={(e) =>
-                        setCourse({
-                          ...course,
-                          instructor: { ...course.instructor, avatar: e.target.value }
-                        })
-                      }
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          // Show preview locally
+                          const previewUrl = URL.createObjectURL(file);
+                          setCourse((prev) => ({
+                            ...prev,
+                            instructor: { ...prev.instructor, avatar: previewUrl }
+                          }));
+
+                          // Upload to server
+                          const formData = new FormData();
+                          formData.append('image', file);
+                          try {
+                            const token = localStorage.getItem('token');
+                            const response = await fetch('/api/upload/image', {
+                              method: 'POST',
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                              body: formData,
+                            });
+                            if (!response.ok) {
+                              throw new Error('Image upload failed');
+                            }
+                            const data = await response.json();
+                            // Prepend backend base URL to image URL
+                            const backendBaseUrl = 'http://localhost:5000';
+                            const fullUrl = data.url.startsWith('http') ? data.url : backendBaseUrl + data.url;
+                            setCourse((prev) => ({
+                              ...prev,
+                              instructor: { ...prev.instructor, avatar: fullUrl }
+                            }));
+                          } catch (error) {
+                            alert('Failed to upload image');
+                          }
+                        }
+                      }}
                       className="w-full p-2 border rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     />
+                    {course.instructor.avatar && (
+                      <img
+                        src={course.instructor.avatar}
+                        alt="Instructor Avatar Preview"
+                        className="mt-2 max-h-40 object-contain rounded"
+                      />
+                    )}
                   </motion.div>
                 </div>
               </div>

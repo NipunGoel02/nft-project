@@ -47,9 +47,13 @@ const handleProfileImageChange = async (e) => {
           Authorization: `Bearer ${token}`
         }
       });
-      if (response.data && response.data.profilePicture) {
-        setProfileImage(response.data.profilePicture); // Use backend URL after upload
-      }
+        if (response.data && response.data.profilePicture) {
+          const backendBaseUrl = 'http://localhost:5000';
+          let fullUrl = response.data.profilePicture.startsWith('http') ? response.data.profilePicture : backendBaseUrl + response.data.profilePicture;
+          // Append timestamp to bust cache
+          fullUrl += `?t=${new Date().getTime()}`;
+          setProfileImage(fullUrl); // Use backend URL after upload
+        }
     } catch (error) {
       console.error('Failed to upload profile picture:', error);
       // Optionally revert preview on error
@@ -101,7 +105,11 @@ const handleProfileImageChange = async (e) => {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (response.data && response.data.profilePicture) {
-            setProfileImage(response.data.profilePicture);
+            const backendBaseUrl = 'http://localhost:5000';
+            let fullUrl = response.data.profilePicture.startsWith('http') ? response.data.profilePicture : backendBaseUrl + response.data.profilePicture;
+            // Append timestamp to bust cache
+            fullUrl += `?t=${new Date().getTime()}`;
+            setProfileImage(fullUrl);
           }
         }
       } catch (error) {
@@ -123,9 +131,13 @@ const handleProfileImageChange = async (e) => {
       const res = await axios.get('/api/auth/profile/picture', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.data && res.data.profilePicture) {
-        setProfileImage(res.data.profilePicture); // URL from backend
-      }
+        if (res.data && res.data.profilePicture) {
+          const backendBaseUrl = 'http://localhost:5000';
+          let fullUrl = res.data.profilePicture.startsWith('http') ? res.data.profilePicture : backendBaseUrl + res.data.profilePicture;
+          // Append timestamp to bust cache
+          fullUrl += `?t=${new Date().getTime()}`;
+          setProfileImage(fullUrl);
+        }
     } catch (err) {
       setProfileImage(null);
     }
